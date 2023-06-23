@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Search Results</title>
+  <link href="img/favicon.png" rel="icon">
+
+
+  <!-- Include the Firebase JavaScript SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+  <style>
+    /* CSS for search results */
+    body {
+      background-color: #FEA116;
+    }
+
+    .search-results {
+      margin-top: 20px;
+    }
+
+    .search-results .row-cols-5 > * {
+      flex: 0 0 calc(20% - 20px); /* Adjust the width and gap size */
+      margin-right: 20px; /* Adjust the gap size */
+    }
+
+    .search-results .item {
+      border: 1px solid #fff;
+      border-radius: 10px;
+      padding: 10px;
+      background-color: #fff;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      transition: transform 0.3s ease;
+      margin-bottom: 20px; /* Added margin-bottom for gap */
+    }
+
+    .search-results .item:hover {
+      transform: translateY(-5px);
+    }
+
+    .search-results .item img {
+      width: 100%;
+      height: 200px; /* Adjust the desired height for the images */
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+
+    .search-results .item h3 {
+      font-size: 20px;
+      margin-bottom: 10px;
+      color: #FEA116;
+    }
+
+    .search-results .item p {
+      font-size: 14px;
+      margin-bottom: 5px;
+      color: #555;
+    }
+    #searchinsearch{
+      position: right;
+    }
+  </style>
+
+
+<meta charset="utf-8">
+<title>Food On the Go !</title>
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<meta content="" name="keywords">
+<meta content="" name="description">
+
+<!-- Favicon -->
+<link href="img/favicon.ico" rel="icon">
+
+<!-- Google Web Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Nunito:wght@600;700;800&family=Pacifico&display=swap" rel="stylesheet">
+
+<!-- Icon Font Stylesheet -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+<!-- Libraries Stylesheet -->
+<link href="lib/animate/animate.min.css" rel="stylesheet">
+<link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+<link href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+
+<!-- Customized Bootstrap Stylesheet -->
+<link href="css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Template Stylesheet -->
+<link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+
+        <!-- Navbar & Hero Start -->
+        <div class="container-xxl position-relative p-0">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 px-lg-5 py-3 py-lg-0">
+                <a href="" class="navbar-brand p-0">
+                    <h1 class="text-primary m-0"><img src="img/logo.png" alt="Logo">  </i>Food On the Go</h1>
+                    <!-- <img src="img/logo.png" alt="Logo"> -->
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                    <span class="fa fa-bars"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <div class="navbar-nav ms-auto py-0 pe-4">
+                        <a href="index.html" class="nav-item nav-link">Home</a>
+                        <a href="about.html" class="nav-item nav-link ">About</a>
+                        <a href="restaurants.html" class="nav-item nav-link">Restaurant</a>
+                        <a href="menu.html" class="nav-item nav-link">Menu</a>
+                        
+                        <a href="contact.html" class="nav-item nav-link">Contact</a>
+                    </div>
+                </div>
+            </nav>
+            
+            <div class="container-xxl py-5 bg-dark hero-header mb-5">
+                <div class="container text-center my-5 pt-5 pb-4">
+                    <h1 class="display-3 text-white mb-3 animated slideInDown">Search Results</h1>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb justify-content-center text-uppercase">
+                            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                            <!-- <li class="breadcrumb-item"><a href="#">Pages</a></li> -->
+                            <li class="breadcrumb-item text-white active" aria-current="page">Search</li>
+                        </ol>
+                    </nav>
+                </div>
+              <div id="searchinsearch">
+                <div class="search-box" >
+                  <!-- <button class="btn-search"><i class="fas fa-search"></i></button> -->
+                  <form id="searchForm" action="search.html" method="GET">
+                    <!-- <input type="text" name="keyword" placeholder="Type to search..."> -->
+                    <input type="text" name="keyword" class="input-search" placeholder="Type to Search...">
+    
+                    <button type="submit" class="btn-search"><i class="fas fa-search"></i></button>
+                    <!-- <i type="submit" class="fas fa-search"></i> -->
+                  </form>
+                  
+                </div>
+              </div>
+            </div>
+        </div>
+        <!-- Navbar & Hero End -->
+
+
+        <div class="container search-results">
+          <div class="row row-cols-3" id="searchResultsContainer"></div>
+        </div>
+  <script>
+    // Initialize Firebase
+    var firebaseConfig = {
+      // Your Firebase configuration
+      apiKey: "AIzaSyDY72t1s2GuPVcf2TtQQiN4ZsAy53NEQgY",
+    authDomain: "food-on-the-go-76384.firebaseapp.com",
+    databaseURL: "https://food-on-the-go-76384-default-rtdb.firebaseio.com",
+    projectId: "food-on-the-go-76384",
+    storageBucket: "food-on-the-go-76384.appspot.com",
+    messagingSenderId: "1091543660595",
+    appId: "1:1091543660595:web:b8c7d349d14cfbf8534b46",
+    measurementId: "G-ZRKF86R09R"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+
+    // Create a reference to the "items" node
+    var itemsRef = firebase.database().ref("items");
+
+    // Retrieve the search keyword from the URL query string
+    var searchKeyword = new URLSearchParams(window.location.search).get("keyword");
+    var lowercaseSearchKeyword = searchKeyword.toLowerCase();
+
+    // Query the database for items close to the keyword
+    itemsRef.once("value", function(snapshot) {
+      var searchResults = snapshot.val();
+      var searchResultsContainer = document.getElementById("searchResultsContainer");
+      var searchResultsArray = [];
+
+      if (searchResults) {
+        // Find items close to the keyword
+        for (var key in searchResults) {
+          var item = searchResults[key];
+          var lowercaseName = item.name.toLowerCase();
+          var lowercaseHotel = item.hotel.toLowerCase();
+          var lowercaseCategory = item.category.toLowerCase();
+
+          if (
+            lowercaseName.includes(lowercaseSearchKeyword) ||
+            lowercaseHotel.includes(lowercaseSearchKeyword) ||
+            lowercaseCategory.includes(lowercaseSearchKeyword)
+          ) {
+            searchResultsArray.push(item);
+          }
+        }
+
+        // Display the search results
+        if (searchResultsArray.length > 0) {
+          for (var i = 0; i < searchResultsArray.length; i++) {
+            var item = searchResultsArray[i];
+
+            // Create HTML elements for each item and display them
+            
+            var itemElement = document.createElement("div");
+            itemElement.classList.add("item");
+
+            var itemName = document.createElement("h3");
+            itemName.textContent = item.name;
+
+            var itemHotel = document.createElement("p");
+            itemHotel.textContent = "Hotel: " + item.hotel;
+
+            var itemCost = document.createElement("p");
+            itemCost.textContent = "Cost: Rs. " + item.cost;
+
+            var itemAvailable = document.createElement("p");
+            itemAvailable.textContent = "Availability: " + item.available;
+
+            var itemImage = document.createElement("img");
+            itemImage.src = item.image;
+
+            var itemCategory = document.createElement("p");
+            itemCategory.textContent = "Category: " + item.category;
+
+            // Append the elements to the search results container
+            itemElement.appendChild(itemName);
+            itemElement.appendChild(itemHotel);
+            itemElement.appendChild(itemCost);
+            itemElement.appendChild(itemAvailable);
+            itemElement.appendChild(itemImage);
+            itemElement.appendChild(itemCategory);
+
+            searchResultsContainer.appendChild(itemElement);
+          }
+        } else {
+          // Display "No results found" message
+          var noResultsMessage = document.createElement("p");
+          noResultsMessage.textContent = "No results found.";
+          searchResultsContainer.appendChild(noResultsMessage);
+        }
+      } else {
+        // Display "No results found" message
+        var noResultsMessage = document.createElement("p");
+        noResultsMessage.textContent = "No results found.";
+        searchResultsContainer.appendChild(noResultsMessage);
+      }
+    });
+  </script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.7.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+
+
+     <!-- Footer Start -->
+     <div class="container-fluid bg-dark text-light footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">
+        <div class="container py-5">
+            <div class="row g-5">
+                <div class="col-lg-3 col-md-6">
+                    <h4 class="section-title ff-secondary text-start text-primary fw-normal mb-4">Company</h4>
+                    <a class="btn btn-link" href="restaurants.html">Restaurants</a>
+                    <a class="btn btn-link" href="about.html">About Us</a>
+                    <a class="btn btn-link" href="contact.html">Contact Us</a>
+                    <a class="btn btn-link" href="">Privacy Policy</a>
+                    <a class="btn btn-link" href="">Terms & Condition</a>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h4 class="section-title ff-secondary text-start text-primary fw-normal mb-4">Contact</h4>
+                    <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>Vallikavu, Kerala</p>
+                    <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+91 12345 67890</p>
+                    <p class="mb-2"><i class="fa fa-envelope me-3"></i>foodonthego@yahoo.com</p>
+                    <div class="d-flex pt-2">
+                        <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-twitter"></i></a>
+                        <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-facebook-f"></i></a>
+                        <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-youtube"></i></a>
+                        <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-12 text-lg-end">
+                    <img src="img/logo.png" alt="Your Image" class="footer-image">
+                </div> 
+            </div>
+        </div>
+        <div class="container">
+            <div class="copyright">
+                <div class="row">
+                    <div class="col-md-6 text-center text-md-end">
+                        <div class="footer-menu">
+                            <a href="">Home</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer End -->
+</body>
+</html>
